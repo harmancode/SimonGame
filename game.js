@@ -12,23 +12,48 @@ var isGameOver = false;
 
 var clickable = true;
 
-main();
+var gameStarted = false;
 
-function main() {
+prepareForStart();
+
+function startGame() {
   createAudioElements();
+  gameStarting();
+}
+
+function gameStarting() {
+  level = 0;
+  gamePattern = [];
+  userClickedPattern = [];
+  var headerText = "Game starting..."
+  $("#level-title").text(headerText);
+  playSound("start");
+  $("#level-title").removeClass("game-over");
+  gameStarted = true;
+  clickable = true;
+  isGameOver = false;
+  setTimeout(function() {
+    nextSequence();
+  }, 900);
+}
+
+function prepareForStart() {
+  var headerText = "Click any color to start"
+  $("#level-title").text(headerText);
   addClickEventListener();
-  nextSequence();
 }
 
 function createAudioElements() {
   // Create audio elements and add them to audioElements array.
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     var audioElement = document.createElement("audio");
     var filePath = "sounds/"
     if (i < 4) {
       filePath = filePath + buttonColors[i] + ".mp3";
-    } else {
+    } else if (i == 4) {
       filePath = filePath + "wrong" + ".mp3";
+    } else if (i == 5) {
+      filePath = filePath + "start" + ".mp3";
     }
     audioElement.setAttribute('src', filePath);
     audioElements.push(audioElement);
@@ -56,6 +81,9 @@ function playSound(name) {
       break;
     case "wrong":
       playSoundByAudioElement(audioElements[4]);
+      break;
+    case "start":
+      playSoundByAudioElement(audioElements[5]);
       break;
     default:
       break;
@@ -124,10 +152,14 @@ function animatePress(color) {
 }
 
 function handleClick(color) {
-  if (!isGameOver && clickable) {
-    userClickedPattern.push(color);
-    playSound(color);
-    animatePress(color);
+  if (gameStarted) {
+    if (!isGameOver && clickable) {
+      userClickedPattern.push(color);
+      playSound(color);
+      animatePress(color);
+    }
+  } else {
+    startGame();
   }
 }
 
@@ -189,6 +221,7 @@ function gameOver() {
   $("#level-title").text(gameOverText);
   $("#level-title").addClass("game-over");
   isGameOver = true;
+  gameStarted = false;
 }
 
 function addClickEventListener() {
