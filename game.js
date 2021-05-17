@@ -25,7 +25,7 @@ function gameStarting() {
   level = 0;
   gamePattern = [];
   userClickedPattern = [];
-  var headerText = "Game starting..."
+  var headerText = "Game is starting..."
   $("#level-title").text(headerText);
   playSound("start");
   $("#level-title").removeClass("game-over");
